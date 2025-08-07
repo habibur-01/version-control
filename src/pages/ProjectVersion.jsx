@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaRegCircle, FaRegCalendarAlt, FaPlus } from "react-icons/fa";
 import VersionDetails from "../components/modal/VersionDetails";
 import AddVersion from "../components/modal/AddVersion";
@@ -9,10 +9,12 @@ import Loader from "../components/common/Loader";
 import { MdDelete } from "react-icons/md";
 import { BiSolidEdit } from "react-icons/bi";
 import UpdateVersion from "../components/modal/UpdateVersion";
+import { AuthContext } from "../AuthProvider/AuthProvider";
 
 const ProjectVersion = () => {
   const { type } = useParams();
-  const [showModal, setShowModal] = useState(false);
+  const auth = useContext(AuthContext);
+  const { searchText, showModal, handleVersion } = auth;
   const [showDetails, setShowDetails] = useState(false);
   const [versions, setVersions] = useState([]);
   const [project, setPorject] = useState(null);
@@ -40,9 +42,9 @@ const ProjectVersion = () => {
   }, [type]);
 
   // add project version
-  const handleVersion = () => {
-    setShowModal(true);
-  };
+  // const handleVersion = () => {
+  //   setShowModal(true);
+  // };
 
   // handle project details
   const handleShowDetails = (item) => {
@@ -52,7 +54,6 @@ const ProjectVersion = () => {
 
   const handleDelete = async (id) => {
     try {
-      console.log("🚀 ~ ProjectVersion ~ id:", id);
       await deleteVersion(id);
       setVersions((prevVersions) =>
         prevVersions.filter((version) => version.id !== id)
@@ -73,7 +74,7 @@ const ProjectVersion = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="py-6 lg:p-6">
       {/* Header */}
       <div className="flex items-center justify-between ">
         <h1 className="text-2xl font-bold mb-4">{type}</h1>
@@ -122,7 +123,7 @@ const ProjectVersion = () => {
                         </span>
                       </div>
                     </div>
-                    <p className="text-sm text-gray-500 truncate max-w-sm">
+                    <p className="text-sm text-gray-500 truncate w-48 lg:max-w-sm">
                       {stripHtmlTags(item?.description)}
                     </p>
 

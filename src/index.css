@@ -32,7 +32,21 @@ body {
 .rsw-ce h2 {
   font-size: 1.5em;
 }
-
+.version-add::-webkit-scrollbar {
+  display: none; /* Hides the scrollbar */
+}
+.version-add::-webkit-scrollbar {
+  display: none; /* Hides the scrollbar */
+}
+.version-add::-webkit-scrollbar {
+  display: none; /* Hides the scrollbar */
+}
+.version-add {
+  scrollbar-width: none; /* Hides the scrollbar */
+}
+.version-add {
+  -ms-overflow-style: none; /* Hides the scrollbar */
+}
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

@@ -12,7 +12,7 @@ import {
 import { db } from "../firebase/firebase";
 // Adjust path as needed
 
-// Modified version with onSnapshot
+// Get version with onSnapshot
 export function getVersionsByType(type, callback, errorCallback) {
   const versionsRef = collection(db, "versions");
   const q = query(versionsRef, where("type", "==", type));
@@ -56,5 +56,38 @@ export async function deleteVersion(id) {
     console.log("Version deleted!");
   } catch (error) {
     console.error("Error deleting document:", error);
+  }
+}
+
+// Delete Project and it's associated Versions
+export async function deleteProjectWithVersions(projectName) {
+  try {
+    // Step 1: Delete project(s)
+    const projectQuery = query(
+      collection(db, "projects"),
+      where("name", "==", projectName)
+    );
+    const projectSnapshot = await getDocs(projectQuery);
+
+    await Promise.all(
+      projectSnapshot.docs.map((docSnap) =>
+        deleteDoc(doc(db, "projects", docSnap.id))
+      )
+    );
+
+    // Step 2: Delete all versions with type === projectName
+    const versionQuery = query(
+      collection(db, "versions"),
+      where("type", "==", projectName)
+    );
+    const versionSnapshot = await getDocs(versionQuery);
+
+    await Promise.all(
+      versionSnapshot.docs.map((docSnap) =>
+        deleteDoc(doc(db, "versions", docSnap.id))
+      )
+    );
+  } catch (error) {
+    console.error("Error deleting project and versions:", error);
   }
 }

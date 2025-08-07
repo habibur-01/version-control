@@ -1,4 +1,4 @@
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { Formik } from "formik";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
@@ -9,7 +9,6 @@ import { db } from "../../firebase/firebase";
 const validationSchema = Yup.object({
   name: Yup.string().required("Name is required"),
   color: Yup.string().required("Please select a color"),
-  description: Yup.string().required("Please write a description"),
 });
 
 const AddProject = ({ onClose }) => {
@@ -36,6 +35,18 @@ const AddProject = ({ onClose }) => {
           onSubmit={async (values, { resetForm }) => {
             setLoading(true);
             try {
+              const q = query(
+                collection(db, "projects"),
+                where("name", "==", values.name.trim())
+              );
+              const querySnapshot = await getDocs(q);
+
+              if (!querySnapshot.empty) {
+                toast.error("A project with this name already exists.");
+                setLoading(false);
+                return;
+              }
+
               await addDoc(collection(db, "projects"), values);
 
               resetForm();

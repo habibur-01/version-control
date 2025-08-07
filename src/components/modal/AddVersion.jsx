@@ -1,5 +1,5 @@
 import { Formik } from "formik";
-import React, { useState, version } from "react";
+import React, { useContext, useState, version } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import Editor from "react-simple-wysiwyg";
 import * as Yup from "yup";
@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
 import { useEffect } from "react";
+import { AuthContext } from "../../AuthProvider/AuthProvider";
 
 // Validation schema
 const validationSchema = Yup.object({
@@ -19,6 +20,8 @@ const validationSchema = Yup.object({
 });
 
 const AddVersion = ({ onClose }) => {
+  const auth = useContext(AuthContext);
+  const { handleVersion } = auth;
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -42,10 +45,10 @@ const AddVersion = ({ onClose }) => {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/5 flex items-center justify-center p-4">
-      <div className="bg-white shadow-lg rounded-2xl w-full max-w-2xl p-6 relative">
+    <div className="fixed inset-0 z-50 bg-black/5 flex items-center justify-center px-4 pt-6 pb-20 md:p-4 h-full overflow-y-scroll">
+      <div className="bg-white shadow-lg rounded-2xl w-full max-w-2xl p-6 relative max-h-full overflow-y-auto version-add">
         <button
-          onClick={onClose}
+          onClick={handleVersion}
           className="absolute top-3 right-3 text-gray-500 hover:text-black text-2xl hover:cursor-pointer"
         >
           &times;

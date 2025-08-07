@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaRegCircle, FaRegCalendarAlt, FaPlus } from "react-icons/fa";
 import VersionDetails from "../components/modal/VersionDetails";
 import AddVersion from "../components/modal/AddVersion";
@@ -9,9 +9,12 @@ import Loader from "../components/common/Loader";
 import { MdDelete } from "react-icons/md";
 import { BiSolidEdit } from "react-icons/bi";
 import UpdateVersion from "../components/modal/UpdateVersion";
+import { AuthContext } from "../AuthProvider/AuthProvider";
 
 const Dashboard = () => {
-  const [showModal, setShowModal] = useState(false);
+  const auth = useContext(AuthContext);
+  const { searchText, showModal, handleVersion } = auth;
+  // const [showModal, setShowModal] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [project, setPorject] = useState();
   const [loading, setLoading] = useState(false);
@@ -41,10 +44,23 @@ const Dashboard = () => {
     return () => unsubscribe();
   }, []);
 
+  // Filter data based on searchText
+  const filteredData =
+    data.length > 0 &&
+    data.filter((item) => {
+      const lowerSearch = searchText.toLowerCase();
+
+      return (
+        item.version?.toLowerCase().includes(lowerSearch) ||
+        item.platform?.toLowerCase().includes(lowerSearch) ||
+        item.type?.toLowerCase().includes(lowerSearch)
+      );
+    });
+
   // add project version
-  const handleVersion = () => {
-    setShowModal(true);
-  };
+  // const handleVersion = () => {
+  //   setShowModal(true);
+  // };
 
   // handle project details
   const handleShowDetails = (item) => {
@@ -75,7 +91,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="py-6 lg:p-6">
       {/* Header */}
       <div className="flex items-center justify-between ">
         <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
@@ -91,7 +107,7 @@ const Dashboard = () => {
         {loading ? (
           <Loader />
         ) : data && data.length > 0 ? (
-          data.map((item) => (
+          filteredData.map((item) => (
             // <Link to={`/version/${item?.type}`} key={item?.id}>
             <div key={item?.id} onClick={() => handleShowDetails(item)}>
               {/* Task Item */}
@@ -125,7 +141,7 @@ const Dashboard = () => {
                         </span>
                       </div>
                     </div>
-                    <div className="text-sm text-gray-500 truncate max-w-sm">
+                    <div className="text-sm text-gray-500 truncate w-48 lg:max-w-sm">
                       {stripHtmlTags(item?.description)}
                     </div>
 
